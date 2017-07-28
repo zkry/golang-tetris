@@ -102,8 +102,8 @@ func main() {
 // run is the main code for the game. Allows pixelgl to run on main thread
 func run() {
 	// Initialize the window
-	windowWidth := 765
-	windowHeight := 450
+	windowWidth := 765.0
+	windowHeight := 450.0
 	cfg := pixelgl.WindowConfig{
 		Title:  "Blockfall",
 		Bounds: pixel.R(0, 0, windowWidth, windowHeight),
@@ -116,13 +116,13 @@ func run() {
 
 	// Load Various Resources:
 	// Matriax on opengameart.org
-	blockGen, err = ss.LoadSpriteSheet("blocks.png", 2, 8)
+	blockGen, err = ss.LoadSpriteSheet("resources/blocks.png", 2, 8)
 	if err != nil {
 		panic(err)
 	}
 
 	// Background image, by ansimuz on opengameart.org
-	bgPic, err := ss.LoadPicture("parallax-mountain-bg.png")
+	bgPic, err := ss.LoadPicture("resources/parallax-mountain-bg.png")
 	if err != nil {
 		panic(err)
 	}
@@ -235,7 +235,7 @@ func displayText(win *pixelgl.Window) {
 	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	scoreTxt := text.New(pixel.V(scoreTextLocX, scoreTextLocY), basicAtlas)
 	fmt.Fprintf(scoreTxt, "Score: %d", score)
-	scoreTxt.Draw(win, pixel.IM.Scaled(scoreTxt.Orig, 4))
+	scoreTxt.Draw(win, pixel.IM.Scaled(scoreTxt.Orig, 2))
 
 	nextPieceTextLocX := 142.0
 	nextPieceTextLocY := 285.0
