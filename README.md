@@ -17,5 +17,5 @@ This is a typical Tetris clone. I tried to make the gameplay experience as smoot
 ## Todo
 
 - [ ] Menus (Opening, game-over, pause)
-- [ ] Aniation for row clearing
+- [ ] Animation for row clearing
 - [ ] Score tracker
