@@ -16,10 +16,6 @@ import (
 	ss "github.com/zkry/blockfall/spritesheet"
 )
 
-func main() {
-	pixelgl.Run(run)
-}
-
 // BoardRows is the height of the game board in terms of blocks
 const BoardRows = 22
 
@@ -99,10 +95,18 @@ var bgImgSprite pixel.Sprite
 var gameBGSprite pixel.Sprite
 var nextPieceBGSprite pixel.Sprite
 
+func main() {
+	pixelgl.Run(run)
+}
+
+// run is the main code for the game. Allows pixelgl to run on main thread
 func run() {
+	// Initialize the window
+	windowWidth := 765
+	windowHeight := 450
 	cfg := pixelgl.WindowConfig{
 		Title:  "Blockfall",
-		Bounds: pixel.R(0, 0, 765, 450),
+		Bounds: pixel.R(0, 0, windowWidth, windowHeight),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
@@ -110,6 +114,7 @@ func run() {
 		panic(err)
 	}
 
+	// Load Various Resources:
 	// Matriax on opengameart.org
 	blockGen, err = ss.LoadSpriteSheet("blocks.png", 2, 8)
 	if err != nil {
@@ -132,7 +137,7 @@ func run() {
 	nextPieceBGSprite = *pixel.NewSprite(nextPiecePic, nextPiecePic.Bounds())
 
 	nextPiece = Piece(rand.Intn(7))
-	gameBoard.addPiece()
+	gameBoard.addPiece() // Add initial Piece to game
 	last := time.Now()
 	for !win.Closed() && !gameOver {
 		// Perform time processing events
@@ -155,7 +160,9 @@ func run() {
 			}
 		}
 
-		// Delay for left/right movement
+		// Delay for left/right movement. When a key is pressed and holded
+		// it should first move when pressed, then after a short wait,
+		// it will continuously move. Like when a key is pressed in a text editor
 		if leftRightDelay > 0.0 {
 			leftRightDelay = math.Max(leftRightDelay-dt, 0.0)
 		}
@@ -169,6 +176,7 @@ func run() {
 			gravitySpeed = baseSpeed
 		}
 
+		// Keypress Functions
 		if win.Pressed(pixelgl.KeyRight) && leftRightDelay == 0.0 {
 			gameBoard.movePiece(1)
 			if moveCounter > 0 {
@@ -188,13 +196,13 @@ func run() {
 			moveCounter++
 		}
 		if win.JustPressed(pixelgl.KeyDown) {
-			gravitySpeed = 0.08 // TODO: Code could result in bugs
+			gravitySpeed = 0.08 // TODO: Code could result in bugs if game pause functionality added
 			if gravityTimer > 0.08 {
 				gravityTimer = 0.08
 			}
 		}
 		if win.JustReleased(pixelgl.KeyDown) {
-			gravitySpeed = baseSpeed // TODO: Code could result in bugs
+			gravitySpeed = baseSpeed // TODO: Code could result in bugs if game pause functionality added
 		}
 		if win.JustPressed(pixelgl.KeyUp) {
 			gameBoard.rotatePiece()
@@ -211,9 +219,9 @@ func run() {
 			leftRightDelay = 0
 		}
 
+		// Display Functions
 		win.Clear(colornames.Black)
 		displayBG(win)
-
 		displayText(win)
 		gameBoard.displayBoard(win)
 		win.Update()
@@ -227,7 +235,7 @@ func displayText(win *pixelgl.Window) {
 	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	scoreTxt := text.New(pixel.V(scoreTextLocX, scoreTextLocY), basicAtlas)
 	fmt.Fprintf(scoreTxt, "Score: %d", score)
-	scoreTxt.Draw(win, pixel.IM)
+	scoreTxt.Draw(win, pixel.IM.Scaled(scoreTxt.Orig, 4))
 
 	nextPieceTextLocX := 142.0
 	nextPieceTextLocY := 285.0
@@ -237,6 +245,7 @@ func displayText(win *pixelgl.Window) {
 }
 
 func displayBG(win *pixelgl.Window) {
+	// Display various background images
 	bgImgSprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 	gameBGSprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 	nextPieceBGSprite.Draw(win, pixel.IM.Moved(pixel.V(182, 225)))
@@ -259,10 +268,12 @@ func displayBG(win *pixelgl.Window) {
 	}
 }
 
+// block2spriteIdx associates a blocks color (b Block) with its index in the sprite sheet.
 func block2spriteIdx(b Block) int {
 	return int(b) - 1
 }
 
+// piece2Block associates a pieces shape (Piece) with it's color/image (Block).
 func piece2Block(p Piece) Block {
 	switch p {
 	case LPiece:

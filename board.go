@@ -7,6 +7,9 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
+// isTouchingFloor checks if the piece that the user is controlling has a piece
+// directly below it. Used to give the user more time when placing block on
+// floor
 func (b *Board) isTouchingFloor() bool {
 	blockType := b[activeShape[0].row][activeShape[0].col]
 	b.drawPiece(activeShape, Empty)
@@ -15,7 +18,12 @@ func (b *Board) isTouchingFloor() bool {
 	return isTouching
 }
 
+// rotatePiece rotates the piece that the user is currently moving clockwise by
+// 90 degrees. The rotation is made and collision is checked. If the rotation can
+// be completed by moving the newly rotated shape, the rotation will also be
+// performed. If it is impossible to rotate, does nothing.
 func (b *Board) rotatePiece() {
+	// The O piece should not be rotated
 	if currentPiece == OPiece {
 		return
 	}
@@ -23,13 +31,15 @@ func (b *Board) rotatePiece() {
 	// Erase Piece
 	b.drawPiece(activeShape, Empty)
 
+	// Get the new shape and check for it's collision
 	newShape := rotateShape(activeShape)
 	if b.checkCollision(newShape) {
 		if !b.checkCollision(moveShapeRight(newShape)) {
 			newShape = moveShapeRight(newShape)
 		} else if !b.checkCollision(moveShapeLeft(newShape)) {
 			newShape = moveShapeLeft(newShape)
-			// TODO: Add up case
+		} else if !b.checkCollision(moveShapeDown(newShape)) {
+			newShape = moveShapeDown(newShape)
 		} else {
 			b.drawPiece(activeShape, blockType)
 			return
@@ -39,6 +49,8 @@ func (b *Board) rotatePiece() {
 	b.drawPiece(activeShape, blockType)
 }
 
+// movePiece attemps to move the piece that the user is controlling either
+// right or left. +1 signifies a right move while -1 signifies a left move
 func (b *Board) movePiece(dir int) {
 	blockType := b[activeShape[0].row][activeShape[0].col]
 
@@ -53,12 +65,17 @@ func (b *Board) movePiece(dir int) {
 	b.drawPiece(activeShape, blockType)
 }
 
+// drawPiece sets the values of a board, b, to a specific block type, t
+// according to shape, s.
 func (b *Board) drawPiece(s Shape, t Block) {
 	for i := 0; i < 4; i++ {
 		b[activeShape[i].row][activeShape[i].col] = t
 	}
 }
 
+// checkCollision checks if at the 4 points of a shape, s, there is
+// nothing but Empty value under it and the position of the shape
+// is inside the playing board (10x22 (top two rows invisiable)).
 func (b Board) checkCollision(s Shape) bool {
 	for i := 0; i < 4; i++ {
 		r := s[i].row
@@ -70,11 +87,15 @@ func (b Board) checkCollision(s Shape) bool {
 	return false
 }
 
+// applyGravity is the function that moves a piece down. If a collision
+// is detected place the piece down and add a new piece. Returns wheather
+// a collision was made.
 func (b *Board) applyGravity() bool {
 	blockType := b[activeShape[0].row][activeShape[0].col]
 	// Erase old piece
 	b.drawPiece(activeShape, Empty)
 
+	// Does the block collide if it moves down?
 	didCollide := b.checkCollision(moveShapeDown(activeShape))
 
 	if !didCollide {
@@ -94,6 +115,7 @@ func (b *Board) applyGravity() bool {
 	return false
 }
 
+// instafall calls the applyGravity function until a collision is detected.
 func (b *Board) instafall() {
 	collide := false
 	for !collide {
@@ -101,11 +123,14 @@ func (b *Board) instafall() {
 	}
 }
 
+// checkRowCompletion checks if the rows in a given shape are filled (ie should
+// be deleted). If full, deletes the rows.
 func (b *Board) checkRowCompletion(s Shape) {
 	// Ony the rows of the shape can be filled
 	rowWasDeleted := true
 	// Since when we delete a row it can be shifted down, repeatedly try
 	// to delete a row until no more deletes can be made
+	var deleteRowCt int
 	for rowWasDeleted {
 		rowWasDeleted = false
 		for i := 0; i < 4; i++ {
@@ -123,11 +148,17 @@ func (b *Board) checkRowCompletion(s Shape) {
 				b.deleteRow(r)
 				rowWasDeleted = true
 				score += 200
+				deleteRowCt++
 			}
 		}
 	}
+	// Bonus score for combos over one
+	if deleteRowCt > 1 {
+		score += (deleteRowCt - 1) * 200
+	}
 }
 
+// deleteRow remoes a row by shifting everything above it down by one.
 func (b *Board) deleteRow(row int) {
 	for r := row; r < 21; r++ {
 		for c := 0; c < 10; c++ {
@@ -136,16 +167,21 @@ func (b *Board) deleteRow(row int) {
 	}
 }
 
+// setPiece sets a value in the game board to a specific block type.
 func (b *Board) setPiece(r, c int, val Block) {
 	b[r][c] = val
 }
 
+// fillShape sets
 func (b *Board) fillShape(s Shape, val Block) {
 	for i := 0; i < 4; i++ {
 		b.setPiece(s[i].row, s[i].col, val)
 	}
 }
 
+// addPiece creates a piece at the top of the screen at a random position
+// and sets it to the piece that the player is controlling
+// (ie activeShape).
 func (b *Board) addPiece() {
 	var offset int
 	if nextPiece == IPiece {

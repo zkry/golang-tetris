@@ -1,5 +1,6 @@
 package main
 
+// moveShape shifts a shape in a directy according to a given row and column.
 func moveShape(r, c int, s Shape) Shape {
 	var newShape Shape
 	for i := 0; i < 4; i++ {
@@ -21,6 +22,8 @@ func moveShapeLeft(s Shape) Shape {
 	return moveShape(0, -1, s)
 }
 
+// isGameOver checks if any of the Points in a shape are in the invisable rows
+// (ie rows 20 and 21)
 func isGameOver(s Shape) bool {
 	for i := 0; i < 4; i++ {
 		if s[i].row >= 20 {
@@ -55,6 +58,8 @@ func getShapeHeight(s Shape) int {
 	return maxHeight - minHeight
 }
 
+// rotateShape rotates a shape by 90 degrees based on the pivot point
+// which is always the second element in the shape array (ie s[1]).
 func rotateShape(s Shape) Shape {
 	var retShape Shape
 	pivot := s[1]
@@ -72,6 +77,9 @@ func rotateShape(s Shape) Shape {
 	return retShape
 }
 
+// getShapeFromPiece returns the shape based on the piece type. There
+// are seven shapes available: LPiece, IPiece, OPiece, TPiece, SPiece,
+// ZPiece, and JPiece.
 func getShapeFromPiece(p Piece) Shape {
 	var retShape Shape
 	switch p {
