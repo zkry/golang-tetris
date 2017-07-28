@@ -8,7 +8,7 @@ This is a typical Tetris clone. I tried to make the gameplay experience as smoot
 ![A sample example of the program](docs/media/example2.png?raw=true "An example of the program running")
 
 ## Running the Game
-The only dependancy that the game uses is the game library github.com/faiface/pixel. If you don't have it already you can run `go get github.com/faiface/pixel` to install it as well as `go get github.com/zkry/golang-tetris` to get the game.
+The only dependency that the game uses is the game library github.com/faiface/pixel. If you don't have it already you can run `go get github.com/faiface/pixel` to install it as well as `go get github.com/zkry/golang-tetris` to get the game.
 
 Once you have the files, you can run `go run *.go` to play the game.
 
@@ -17,7 +17,7 @@ Once you have the files, you can run `go run *.go` to play the game.
 - Left/Right arrow - Move piece
 - Up arrow - Rotate piece
 - Down arrow - Fast fall
-- Space - Instafall
+- Space - Instant drop
 
 ## Todo
 
