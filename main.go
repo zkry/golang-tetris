@@ -13,7 +13,7 @@ import (
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 
-	ss "github.com/zkry/blockfall/spritesheet"
+	ss "github.com/zkry/golang-tetris/spritesheet"
 )
 
 // BoardRows is the height of the game board in terms of blocks

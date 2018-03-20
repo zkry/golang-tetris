@@ -1,7 +1,6 @@
 package spritesheet
 
 import (
-	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -10,6 +9,8 @@ import (
 	"github.com/faiface/pixel"
 )
 
+// LoadSpriteSheet takes a path to a resource and how it should be divided and returns
+// a funciton to optain the sprite at that index
 func LoadSpriteSheet(path string, row, col int) (func(int) pixel.Picture, error) {
 	// Open file
 	file, err := os.Open(path)
@@ -28,7 +29,7 @@ func LoadSpriteSheet(path string, row, col int) (func(int) pixel.Picture, error)
 	b := img.Bounds()
 	if b.Max.X/col != b.Max.Y/row {
 		fmt.Println("width/col = ", b.Max.X, ", height/row = ", b.Max.Y)
-		return nil, errors.New(fmt.Sprintf("Invalid dimensions (%d, %d) for sprite sheet %s\n", row, col, path))
+		return nil, fmt.Errorf(fmt.Sprintf("Invalid dimensions (%d, %d) for sprite sheet %s\n", row, col, path))
 	}
 
 	tileSize := b.Max.X / col
