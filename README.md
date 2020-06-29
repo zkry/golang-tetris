@@ -1,6 +1,6 @@
 # Golang Tetris
 
-This is my first experience writing games in Golang. I stumbled upon the 2D game library at github.com/faiface/pixel and wanted to try it out. After using it for this game, I have to admit that the library is very well designed and easy to use. Anyone interested in creating games should definitely check it out.
+This is my first experience writing games in Golang. I stumbled upon the 2D game library at [github.com/faiface/pixel](github.com/faiface/pixel) and wanted to try it out. After using it for this game, I have to admit that the library is very well designed and easy to use. Anyone interested in creating games should definitely check it out.
 
 This is a typical Tetris clone. I tried to make the gameplay experience as smooth as possible though the game is lacking bells and whistles like a title-screen. Here are some screen shots of the game:
 
