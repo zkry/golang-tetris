@@ -5,6 +5,7 @@ import (
 	_ "image/png"
 	"math"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -116,13 +117,17 @@ func run() {
 
 	// Load Various Resources:
 	// Matriax on opengameart.org
-	blockGen, err = ss.LoadSpriteSheet("resources/blocks.png", 2, 8)
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	blockGen, err = ss.LoadSpriteSheet(pwd+"/blocks.png", 2, 8)
 	if err != nil {
 		panic(err)
 	}
 
 	// Background image, by ansimuz on opengameart.org
-	bgPic, err := ss.LoadPicture("resources/parallax-mountain-bg.png")
+	bgPic, err := ss.LoadPicture(pwd + "/parallax-mountain-bg.png")
 	if err != nil {
 		panic(err)
 	}
